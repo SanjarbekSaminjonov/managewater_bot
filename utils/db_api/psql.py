@@ -49,8 +49,11 @@ class Database:
 
     async def get_user_id(self, telegram_id):
         sql = 'SELECT id FROM accounts_user WHERE telegram_id = $1'
-        return await self.execute(sql, str(telegram_id), fetchval=True)
+        res = await self.execute(sql, str(telegram_id), fetchval=True)
+        return res
 
-    async def count_users(self):
-        sql = "SELECT COUNT(*) FROM accounts_user"
-        return await self.execute(sql, fetchval=True)
+    async def get_user_full_name(self, telegram_id):
+        sql = 'SELECT id, first_name, last_name FROM accounts_user WHERE telegram_id = $1'
+        user = await self.execute(sql, str(telegram_id), fetchrow=True)
+        if user is not None:
+            return f'{user[1]} {user[2]}'
