@@ -26,19 +26,3 @@ words = {
 
 def get_word(key: Union[str], lang: Union[str] = 'uz') -> Union[str]:
     return words[lang].get(key)
-
-
-# def get_words(keys: Union[list[str]], lang: Union[str] = 'uz') -> Union[list]:
-#     res = list()
-#     for key in keys:
-#         word = words[lang].get(key)
-#         if word is not None:
-#             res.append(word)
-#     return res
-
-
-# if __name__ == '__main__':
-#     uz_words = get_words(['yes', 'no'])
-#     en_words = get_words(['yes', 'no', 'cancel'])
-#     print(uz_words)
-#     print(en_words)
