@@ -7,6 +7,8 @@ from data.regions import regions_list, districts_list
 from states.auth import UserRegisterState
 from keyboards.default import contact_button, buttons
 from keyboards.inline import numbers_buttons
+from utils.assistant.user_info import makeup_user_info, hash_password
+from utils.backend_connection.register_api import create_user
 
 
 @dp.message_handler(text_contains=_('register'), state=UserRegisterState.start_register)
@@ -53,7 +55,7 @@ async def register_user(message: Message, state: FSMContext):
 
 
 @dp.message_handler(state=UserRegisterState.region)
-async def register(message: Message, state: FSMContext):
+async def register_user(message: Message, state: FSMContext):
     region = message.text
     buttons_group = districts_list(region)
     buttons_group.append(_('cancel'))
@@ -66,7 +68,7 @@ async def register(message: Message, state: FSMContext):
 
 
 @dp.message_handler(state=UserRegisterState.city)
-async def register(message: Message, state: FSMContext):
+async def register_user(message: Message, state: FSMContext):
     await UserRegisterState.next()
     await message.answer(
         _('request_org_name'),
@@ -76,22 +78,18 @@ async def register(message: Message, state: FSMContext):
 
 
 @dp.message_handler(state=UserRegisterState.org_name)
-async def register(message: Message, state: FSMContext):
+async def register_user(message: Message, state: FSMContext):
     await UserRegisterState.next()
-    password_text = "Barcha ma'lumotlaringiz xavfsizligi uchun parol kiriting.\n"
-    password_text += "<i>Parol uzunligi 4 - 6 xonali bo'lishi lozim</i>\n\n"
-    password_text += "Parol:"
+    password_text = _('password_text')
     await message.answer(
         text=password_text,
         reply_markup=numbers_buttons
     )
     await state.update_data({'org_name': message.text})
-    data = await state.get_data()
-    print(data)
 
 
 @dp.callback_query_handler(state=UserRegisterState.password)
-async def register(call: CallbackQuery, state: FSMContext):
+async def register_user(call: CallbackQuery, state: FSMContext):
     call_data = call.data
     data = await state.get_data()
     show_password = data.get('show_password', False)
@@ -99,37 +97,69 @@ async def register(call: CallbackQuery, state: FSMContext):
     password_text = _('password_text')
 
     if call_data.isdigit():
-        if len(password) <= 6:
+        if len(password) < 6:
             password += call_data
-            password_text += f"<b>{password if show_password else '*' * len(password)}</b>"
+            password_text += hash_password(password, show_password)
             await call.message.edit_text(text=password_text, reply_markup=numbers_buttons)
-            await state.update_data({"password": password})
+            await state.update_data({'password': password})
         else:
-            await call.answer("Parol uzunligi 6 xonadan ko\'p bo'la olmadi!", show_alert=True)
+            await call.answer('Parol uzunligi 6 xonadan ko\'p bo\'la olmaydi!', show_alert=True)
 
-    elif call_data == "show":
+    elif call_data == 'show':
         show_password = not show_password
         if password:
-            password_text += f"<b>{password if show_password else '*' * len(password)}</b>"
+            password_text += hash_password(password, show_password)
             await call.message.edit_text(text=password_text, reply_markup=numbers_buttons)
-        await state.update_data({"show_password": show_password})
+        await state.update_data({'show_password': show_password})
 
-    elif call_data == "clear":
+    elif call_data == 'clear':
         if len(password) > 0:
             password = password[:-1]
-            password_text += f"<b>{password if show_password else '*' * len(password)}</b>"
+            password_text += hash_password(password, show_password)
             await call.message.edit_text(text=password_text, reply_markup=numbers_buttons)
-            await state.update_data({"password": password})
+            await state.update_data({'password': password})
 
-    elif call_data == "submit":
+    elif call_data == 'submit':
         if len(password) < 4:
-            await call.answer("Parol kamida 4 xonadan iborat bo'lishi kerak!", show_alert=True)
-    #     else:
-    #         await UserRegisterState.next()
-    #         await call.message.delete()
-    #         await call.message.answer(
-    #             text=local_services.users.makeup_user_info(data=data) + "\n\nBarcha ma'lumotlar to'g'rimi?",
-    #             reply_markup=default.yes_no_buttons
-    #         )
+            await call.answer('Parol uzunligi 4 xonadan kam bo!', show_alert=True)
+        else:
+            await UserRegisterState.next()
+            await call.message.delete()
+            await call.message.answer(
+                text=makeup_user_info(data=data) + '\n\nBarcha ma\'lumotlar to\'g\'rimi?',
+                reply_markup=buttons([_('yes'), _('no')], row_width=2)
+            )
 
     await call.answer(cache_time=0)
+
+
+@dp.message_handler(state=UserRegisterState.save_user, text_contains=_('yes'))
+async def register_user(message: Message, state: FSMContext):
+    await message.answer(_('saving_process'))
+    data = await state.get_data()
+    telegram_id = message.from_user.id
+    data['telegram_id'] = str(telegram_id)
+    resp = await create_user(data)
+    await state.reset_data()
+    if resp:
+        await message.answer(
+            "Jarayon yakunlandi, Sabr bilan ma'lumotlarni kiritganingiz uchun tashakkur. 😊",
+            reply_markup=buttons([_('add_device'), _('my_devices')])
+        )
+        await state.finish()
+    else:
+        await UserRegisterState.start_register.set()
+        await message.answer(
+            "Ro'yxatdan o'tishda xatolik bor. Qayta harakat qiling.",
+            reply_markup=buttons([_('register')])
+        )
+
+
+@dp.message_handler(state=UserRegisterState.save_user, text_contains=_('no'))
+async def register_user(message: Message, state: FSMContext):
+    await UserRegisterState.start_register.set()
+    await message.answer(
+        'Ro\'yxatdan o\'tish yakunlanmadi. Qayta harakat qiling.',
+        reply_markup=buttons([_('register')])
+    )
+    await state.reset_data()

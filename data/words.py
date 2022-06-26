@@ -18,7 +18,8 @@ words = {
         'request_city': 'Tuman/Shaharingizni tanlang',
         'request_org_name': 'Tashkilot nomini kiriting',
         'password_text': 'Barcha ma\'lumotlaringiz xavfsizligi uchun parol kiriting.\n'
-                         '<i>Parol uzunligi 4 - 6 xonali bo\'lishi lozim</i>\n\nParol:\0'
+                         '<i>Parol uzunligi 4 - 6 xonali bo\'lishi lozim</i>\n\nParol:\0',
+        'saving_process': 'Ma\'lumotlar tizimga saqlanmoqda ...'
     }
 }
 
@@ -27,17 +28,17 @@ def get_word(key: Union[str], lang: Union[str] = 'uz') -> Union[str]:
     return words[lang].get(key)
 
 
-def get_words(keys: Union[list[str]], lang: Union[str] = 'uz') -> Union[list]:
-    res = list()
-    for key in keys:
-        word = words[lang].get(key)
-        if word is not None:
-            res.append(word)
-    return res
+# def get_words(keys: Union[list[str]], lang: Union[str] = 'uz') -> Union[list]:
+#     res = list()
+#     for key in keys:
+#         word = words[lang].get(key)
+#         if word is not None:
+#             res.append(word)
+#     return res
 
 
-if __name__ == '__main__':
-    uz_words = get_words(['yes', 'no'])
-    en_words = get_words(['yes', 'no', 'cancel'])
-    print(uz_words)
-    print(en_words)
+# if __name__ == '__main__':
+#     uz_words = get_words(['yes', 'no'])
+#     en_words = get_words(['yes', 'no', 'cancel'])
+#     print(uz_words)
+#     print(en_words)
