@@ -5,8 +5,11 @@ words = {
         'cancel': 'Bekor qilish',
         'yes': 'Ha',
         'no': 'Yo\'q',
-        'add_device': 'Qurilma qo\'shish',
-        'my_devices': 'Mening qurilmalarim',
+        'back': 'Orqaga',
+        'settings': 'Sozlamalar',
+        'channel_devices': 'Suv nazorat postlari',
+        'well_devices': 'Kuzatuv quduqlari',
+        'pump_station': 'Nasos stansiya',
         'register': 'Ro\'yxatdan o\'tish',
         'cancelled': 'Bekor qilindi',
         'request_contact': '📱 Telefon raqamni yuborish',
@@ -19,7 +22,13 @@ words = {
         'request_org_name': 'Tashkilot nomini kiriting',
         'password_text': 'Barcha ma\'lumotlaringiz xavfsizligi uchun parol kiriting.\n'
                          '<i>Parol uzunligi 4 - 6 xonali bo\'lishi lozim</i>\n\nParol:\0',
-        'saving_process': 'Ma\'lumotlar tizimga saqlanmoqda ...'
+        'saving_process': 'Ma\'lumotlar tizimga saqlanmoqda ...',
+        'channel_devices_list': 'Barcha qurilmalar ro\'yxati',
+        'add_new_channel_device': 'Yangi qurilma qo\'shish',
+        'channel_devices_all_statistics': 'Barcha qurilmalar ma\'lumoti',
+        'edt_device_data': '✏ Ma\'lumotlarni o\'zgartirish',
+        'see_location': '📍 Joylashuvni ko\'rish',
+        'back_to_devices_list': '🔙 Qurilmalar ro\'yxati'
     }
 }
 

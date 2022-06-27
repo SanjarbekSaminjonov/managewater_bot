@@ -1,5 +1,6 @@
 from typing import Union
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from data.words import get_word as _
 
 
 def buttons(words: Union[list], row_width: Union[int] = 1) -> ReplyKeyboardMarkup:
@@ -10,7 +11,7 @@ def buttons(words: Union[list], row_width: Union[int] = 1) -> ReplyKeyboardMarku
     return buttons_group
 
 
-def contact_button(contact_text: Union[str], cancel_text: Union[str]) -> ReplyKeyboardMarkup:
+def contact_button_generate(contact_text: Union[str], cancel_text: Union[str]) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         resize_keyboard=True,
         keyboard=[
@@ -22,3 +23,14 @@ def contact_button(contact_text: Union[str], cancel_text: Union[str]) -> ReplyKe
             [KeyboardButton(cancel_text)]
         ]
     )
+
+
+register_button = buttons([_('register')])
+
+contact_button = contact_button_generate(_('request_contact'), _('cancel'))
+
+home_buttons = buttons([_('channel_devices'), _('well_devices'), _('pump_station'), _('settings')], row_width=2)
+
+yes_no_buttons = buttons([_('yes'), _('no'), _('cancel')], row_width=2)
+
+cancel_button = buttons([_('cancel')])

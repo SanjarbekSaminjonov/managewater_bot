@@ -5,7 +5,7 @@ from loader import dp
 from data.words import get_word as _
 from data.regions import regions_list, districts_list
 from states.auth import UserRegisterState
-from keyboards.default import contact_button, buttons
+from keyboards.default import contact_button, buttons, home_buttons, register_button, yes_no_buttons, cancel_button
 from keyboards.inline import numbers_buttons
 from utils.assistant.user_info import makeup_user_info, hash_password
 from utils.backend_connection.register_api import create_user
@@ -15,8 +15,8 @@ from utils.backend_connection.register_api import create_user
 async def register_user(message: Message):
     await UserRegisterState.next()
     await message.answer(
-        text=_('request_phone_number'),
-        reply_markup=contact_button(_('request_contact'), _('cancel'))
+        _('request_phone_number'),
+        reply_markup=contact_button
     )
 
 
@@ -72,7 +72,7 @@ async def register_user(message: Message, state: FSMContext):
     await UserRegisterState.next()
     await message.answer(
         _('request_org_name'),
-        reply_markup=buttons([_('cancel')])
+        reply_markup=cancel_button
     )
     await state.update_data({'city': message.text})
 
@@ -121,13 +121,13 @@ async def register_user(call: CallbackQuery, state: FSMContext):
 
     elif call_data == 'submit':
         if len(password) < 4:
-            await call.answer('Parol uzunligi 4 xonadan kam bo!', show_alert=True)
+            await call.answer('Parol uzunligi 4 xonadan kam bo\'la olmaydi!', show_alert=True)
         else:
             await UserRegisterState.next()
             await call.message.delete()
             await call.message.answer(
                 text=makeup_user_info(data=data) + '\n\nBarcha ma\'lumotlar to\'g\'rimi?',
-                reply_markup=buttons([_('yes'), _('no')], row_width=2)
+                reply_markup=yes_no_buttons
             )
 
     await call.answer(cache_time=0)
@@ -143,15 +143,15 @@ async def register_user(message: Message, state: FSMContext):
     await state.reset_data()
     if resp:
         await message.answer(
-            "Jarayon yakunlandi, Sabr bilan ma'lumotlarni kiritganingiz uchun tashakkur. 😊",
-            reply_markup=buttons([_('add_device'), _('my_devices')])
+            'Jarayon yakunlandi, Sabr bilan ma\'lumotlarni kiritganingiz uchun tashakkur. 😊',
+            reply_markup=home_buttons
         )
         await state.finish()
     else:
         await UserRegisterState.start_register.set()
         await message.answer(
             "Ro'yxatdan o'tishda xatolik bor. Qayta harakat qiling.",
-            reply_markup=buttons([_('register')])
+            reply_markup=register_button
         )
 
 
@@ -160,6 +160,6 @@ async def register_user(message: Message, state: FSMContext):
     await UserRegisterState.start_register.set()
     await message.answer(
         'Ro\'yxatdan o\'tish yakunlanmadi. Qayta harakat qiling.',
-        reply_markup=buttons([_('register')])
+        reply_markup=register_button
     )
     await state.reset_data()

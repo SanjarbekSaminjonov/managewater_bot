@@ -57,3 +57,16 @@ class Database:
         user = await self.execute(sql, str(telegram_id), fetchrow=True)
         if user is not None:
             return f'{user[1]} {user[2]}'
+
+    async def get_user_channel_devices(self, telegram_id):
+        user_id = await self.get_user_id(telegram_id)
+        sql = 'select device_id, name from channels_channeldevice where user_id = $1'
+        return await self.execute(sql, user_id, fetch=True)
+
+    async def get_device_info(self, device_id):
+        sql = '''
+            select device_id, name, phone_number, height, height_conf, latitude, longitude
+            from channels_channeldevice 
+            where device_id = $1
+        '''
+        return await self.execute(sql, device_id, fetchrow=True)
