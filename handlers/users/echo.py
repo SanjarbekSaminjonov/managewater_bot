@@ -14,7 +14,7 @@ async def bot_echo(message: Message, state: FSMContext):
     user_id = await db.get_user_id(message.from_user.id)
     if user_id is not None:
         await state.finish()
-        await message.answer(   
+        await message.answer(
             f'Aniqlanmagan buyruq !',
             reply_markup=buttons([_('add_device'), _('my_devices')])
         )
