@@ -26,9 +26,12 @@ words = {
         'channel_devices_list': 'Barcha qurilmalar ro\'yxati',
         'add_new_channel_device': 'Yangi qurilma qo\'shish',
         'channel_devices_all_statistics': 'Barcha qurilmalar ma\'lumoti',
-        'edt_device_data': '✏ Ma\'lumotlarni o\'zgartirish',
+        'edit_device_data': '✏ Ma\'lumotlarni o\'zgartirish',
+        'see_last_message': '📊 Oxirgi kelgan xabar',
         'see_location': '📍 Joylashuvni ko\'rish',
-        'back_to_devices_list': '🔙 Qurilmalar ro\'yxati'
+        'back_to_devices_list': '🔙 Qurilmalar ro\'yxati',
+        'send_location': '📍 Qurilma joylashuvini yuborish',
+        'ingore_step': 'Tashlab ketish'
     }
 }
 

@@ -18,8 +18,27 @@ def contact_button_generate(contact_text: Union[str], cancel_text: Union[str]) -
             [
                 KeyboardButton(
                     text=contact_text,
-                    request_contact=True)
+                    request_contact=True
+                )
             ],
+            [
+                KeyboardButton(cancel_text)
+            ]
+        ]
+    )
+
+
+def location_button_generate(location_text, ingore_text, cancel_text):
+    return ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        keyboard=[
+            [
+                KeyboardButton(
+                    text=location_text,
+                    request_location=True
+                )
+            ],
+            [KeyboardButton(ingore_text)],
             [KeyboardButton(cancel_text)]
         ]
     )
@@ -28,6 +47,8 @@ def contact_button_generate(contact_text: Union[str], cancel_text: Union[str]) -
 register_button = buttons([_('register')])
 
 contact_button = contact_button_generate(_('request_contact'), _('cancel'))
+
+location_button = location_button_generate(_('send_location'), _('ingore_step'), _('cancel'))
 
 home_buttons = buttons([_('channel_devices'), _('well_devices'), _('pump_station'), _('settings')], row_width=2)
 

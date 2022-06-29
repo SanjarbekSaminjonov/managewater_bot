@@ -67,9 +67,18 @@ def manage_channel_device(device_id):
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text=_('edt_device_data'),
+                    text=_('edit_device_data'),
                     callback_data=manage_channel_device_callback.new(
-                        sep='edt_device_data',
+                        sep='edit_device_data',
+                        device_id=device_id
+                    )
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=_('see_last_message'),
+                    callback_data=manage_channel_device_callback.new(
+                        sep='see_last_message',
                         device_id=device_id
                     )
                 )

@@ -7,7 +7,7 @@ from data.words import get_word as _
 from keyboards.default import home_buttons, register_button
 
 
-@dp.message_handler(text_contains=_('cancel'), state=UserRegisterState.all_states)
+@dp.message_handler(text_contains=_('cancel'), state='*')
 async def cancel_login_register(message: Message, state: FSMContext):
     await state.reset_data()
     user_id = await db.get_user_id(message.from_user.id)
