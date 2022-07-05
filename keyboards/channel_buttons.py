@@ -9,6 +9,8 @@ from data.words import get_word as _
 menu_buttons_callback = CallbackData('callback', 'sep')
 channel_devices_list_callback = CallbackData('callback', 'sep', 'device_id')
 manage_channel_device_callback = CallbackData('callback', 'sep', 'device_id')
+additional_watcher = CallbackData('callback', 'sep', 'device_id', 'user_id')
+
 
 menu_buttons = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -98,6 +100,23 @@ def manage_channel_device(device_id):
                     callback_data=manage_channel_device_callback.new(
                         sep='back_to_devices_list',
                         device_id=device_id
+                    )
+                )
+            ]
+        ]
+    )
+
+
+def send_request_to_be_channel_device_watcher(device_id, user_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='So\'rov yuborish',
+                    callback_data=additional_watcher.new(
+                        sep='send_request_to_watch',
+                        device_id=device_id,
+                        user_id=user_id
                     )
                 )
             ]
