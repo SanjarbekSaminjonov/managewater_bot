@@ -3,8 +3,8 @@ import logging
 from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher import FSMContext
 
-from loader import dp, db, bot
-from keyboards.channel_buttons import menu_buttons_callback
+from loader import dp, db
+from keyboards.channel_buttons import menu_buttons_callback, send_request_to_be_channel_device_watcher
 from keyboards.default import cancel_button, home_buttons, location_button, yes_no_buttons
 from states.add_channel_device import ChannelRegisterState
 from data.words import get_word as _
@@ -14,9 +14,7 @@ from utils.assistant.make_up_info import make_up_channel_device_info_pre_save
 @dp.callback_query_handler(menu_buttons_callback.filter(sep='add_new_channel_device'))
 async def add_new_device(call: CallbackQuery):
     await ChannelRegisterState.device_id.set()
-    await call.message.edit_text('Yangi qurilma qo\'shish')
-    await bot.send_message(
-        call.from_user.id,
+    await call.message.answer(
         'Qurilma "id" sini kiriting (11 xonali)',
         reply_markup=cancel_button
     )
@@ -42,16 +40,33 @@ async def add_new_device(message: Message, state: FSMContext):
             else:
                 await message.answer('Bunday "id" dagi qurilma topilmadi.\nQayta kiring')
         else:
+            await state.finish()
             user_id = await db.get_user_id(message.from_user.id)
-            if user_id == device[5]:
-                await state.finish()
+            owner_full_name = await db.get_user_full_name(message.from_user.id)
+            watching_device = await db.check_user_and_device(user_id, device_id)
+            owner_id = device[5]
+            if user_id == owner_id:
                 await message.answer(
                     'Siz bu qurilmani avval ro\'yxatdan o\'tkazgansiz',
                     reply_markup=home_buttons
                 )
+            elif watching_device is not None:
+                await message.answer(
+                    f'Siz allaqachon ushbu <b>{owner_full_name}</b> ga tegishli '
+                    f'qurilmani kuzatib kelmoqdasiz.',
+                    reply_markup=home_buttons
+                )
             else:
-                await message.answer('Bu qurilma allaqachon ro\'yxatdan o\'tgan')
-                # haqiqiy egasiga so'rov yuborish bo'ladi
+                await message.answer(
+                    text='Bu qurilma allaqachon ro\'yxatdan o\'tgan.',
+                    reply_markup=home_buttons
+                )
+                owner_telegram_id = await db.get_user_telegram_id(owner_id)
+                await message.answer(
+                    f'Qurilma egasi: <b>{owner_full_name}</b>\n'
+                    f'Xohlasangiz ushbu qurilmani kuzatish uchun so\'rov yuboring',
+                    reply_markup=send_request_to_be_channel_device_watcher(device_id, owner_telegram_id)
+                )
     else:
         await message.answer('Kiritilgan "id" 11 xonali emas!\nQayta kiriting')
 
