@@ -9,7 +9,7 @@ from data.words import get_word as _
 menu_buttons_callback = CallbackData('callback', 'sep')
 channel_devices_list_callback = CallbackData('callback', 'sep', 'device_id')
 manage_channel_device_callback = CallbackData('callback', 'sep', 'device_id')
-additional_watcher = CallbackData('callback', 'sep', 'device_id', 'user_id')
+additional_watcher_callback = CallbackData('callback', 'sep', 'device_id', 'user_id')
 
 
 menu_buttons = InlineKeyboardMarkup(
@@ -28,7 +28,7 @@ menu_buttons = InlineKeyboardMarkup(
                 callback_data=menu_buttons_callback.new(
                     sep='add_new_channel_device'
                 )
-            ),
+            )
         ],
         [
             InlineKeyboardButton(
@@ -107,16 +107,51 @@ def manage_channel_device(device_id):
     )
 
 
-def send_request_to_be_channel_device_watcher(device_id, user_id):
+def send_request_to_be_channel_device_watcher(device_id, user_telegram_id):
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
                     text='So\'rov yuborish',
-                    callback_data=additional_watcher.new(
+                    callback_data=additional_watcher_callback.new(
                         sep='send_request_to_watch',
                         device_id=device_id,
-                        user_id=user_id
+                        user_id=user_telegram_id
+                    )
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=_('add_new_channel_device'),
+                    callback_data=menu_buttons_callback.new(
+                        sep='add_new_channel_device'
+                    )
+                )
+            ]
+        ]
+    )
+
+
+def accept_watch_request_button(device_id, watcher_telegram_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='Ruxsat berish',
+                    callback_data=additional_watcher_callback.new(
+                        sep='accept',
+                        device_id=device_id,
+                        user_id=watcher_telegram_id
+                    )
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text='Bekor qilish',
+                    callback_data=additional_watcher_callback.new(
+                        sep='ignore',
+                        device_id=device_id,
+                        user_id=watcher_telegram_id
                     )
                 )
             ]

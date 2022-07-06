@@ -49,14 +49,35 @@ class Database:
 
     async def get_user_id(self, telegram_id):
         sql = 'select id from accounts_user where telegram_id = $1'
-        res = await self.execute(sql, str(telegram_id), fetchval=True)
-        return res
+        return await self.execute(sql, str(telegram_id), fetchval=True)
+
+    async def get_user_telegram_id(self, user_id):
+        sql = 'select telegram_id from accounts_user where id = $1'
+        return await self.execute(sql, user_id, fetchval=True)
 
     async def get_user_full_name(self, telegram_id):
         sql = 'select id, first_name, last_name from accounts_user where telegram_id = $1'
         user = await self.execute(sql, str(telegram_id), fetchrow=True)
         if user is not None:
             return f'{user[1]} {user[2]}'
+
+    async def get_user_info(self, telegram_id):
+        sql = '''
+            select username, first_name, last_name, region, city, org_name
+            from accounts_user 
+            where telegram_id = $1
+        '''
+        user = await self.execute(sql, str(telegram_id), fetchrow=True)
+        if user is not None:
+            return {
+                'username': user[0],
+                'first_name': user[1],
+                'last_name': user[2],
+                'region': user[3],
+                'city': user[4],
+                'org_name': user[5]
+            }
+        return {}
 
     async def get_user_channel_devices(self, telegram_id):
         user_id = await self.get_user_id(telegram_id)
@@ -121,3 +142,24 @@ class Database:
             execute=True
         )
         await self.change_state_base_device(True, device_id)
+
+    async def check_user_and_device(self, watcher_id, device_id):
+        sql = '''
+            select id, connected_at 
+            from watchers_channelwatcher 
+            where watcher_id = $1 and device_id = $2
+        '''
+        return await self.execute(sql, watcher_id, device_id, fetchrow=True)
+
+    async def add_new_channel_watcher(self, device_id, watcher_id):
+        import datetime
+        import pytz
+
+        tz = pytz.timezone('Asia/Tashkent')
+        now = datetime.datetime.now(tz)
+
+        sql = '''
+            insert into watchers_channelwatcher (connected_at, device_id, watcher_id)
+            values ($1, $2, $3)
+        '''
+        await self.execute(sql, now, device_id, watcher_id, execute=True)
