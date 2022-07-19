@@ -32,7 +32,7 @@ async def device_detail(call: CallbackQuery):
     device = await db.get_channel_device_info(device_id)
     device_message = await db.get_last_channel_device_message(device_id)
     if device_message is not None:
-        await call.message.answer(text=makeup_channel_device_message_info(device[1], device_message))
+        await call.message.answer(text=makeup_channel_device_message_info(device, device_message))
     else:
         await call.answer('Ma\'lumot topilmadi !', show_alert=True)
 

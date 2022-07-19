@@ -86,7 +86,7 @@ class Database:
 
     async def get_channel_device_info(self, device_id):
         sql = '''
-            select device_id, name, phone_number, height, height_conf, user_id
+            select device_id, name, phone_number, height, full_height, height_conf
             from channels_channeldevice 
             where device_id = $1
         '''
@@ -102,9 +102,9 @@ class Database:
 
     async def get_last_channel_device_message(self, device_id):
         sql = '''
-            select id h1, h2, w1, w2, vol, bat, net, created_at
+            select h, water_volume, bat, is_charging, net, created_at
             from channels_channelmessage
-            where channel_device_id = $1
+            where device_id = $1
             order by created_at desc 
             limit 1
         '''
