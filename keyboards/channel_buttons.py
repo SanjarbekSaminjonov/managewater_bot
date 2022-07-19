@@ -22,22 +22,22 @@ menu_buttons = InlineKeyboardMarkup(
                 )
             )
         ],
-        [
-            InlineKeyboardButton(
-                text=_('add_new_channel_device'),
-                callback_data=menu_buttons_callback.new(
-                    sep='add_new_channel_device'
-                )
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text=_('channel_devices_all_statistics'),
-                callback_data=menu_buttons_callback.new(
-                    sep='channel_devices_all_statistics'
-                )
-            )
-        ]
+        # [
+        #     InlineKeyboardButton(
+        #         text=_('add_new_channel_device'),
+        #         callback_data=menu_buttons_callback.new(
+        #             sep='add_new_channel_device'
+        #         )
+        #     )
+        # ],
+        # [
+        #     InlineKeyboardButton(
+        #         text=_('channel_devices_all_statistics'),
+        #         callback_data=menu_buttons_callback.new(
+        #             sep='channel_devices_all_statistics'
+        #         )
+        #     )
+        # ]
     ]
 )
 
@@ -67,15 +67,15 @@ def channel_devices_list(devices: Union[list]):
 def manage_channel_device(device_id):
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text=_('edit_device_data'),
-                    callback_data=manage_channel_device_callback.new(
-                        sep='edit_device_data',
-                        device_id=device_id
-                    )
-                )
-            ],
+            # [
+            #     InlineKeyboardButton(
+            #         text=_('edit_device_data'),
+            #         callback_data=manage_channel_device_callback.new(
+            #             sep='edit_device_data',
+            #             device_id=device_id
+            #         )
+            #     )
+            # ],
             [
                 InlineKeyboardButton(
                     text=_('see_last_message'),
